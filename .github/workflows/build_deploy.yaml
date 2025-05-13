@@ -1,0 +1,78 @@
+name: GraalVM Native Image builds
+on: [ push, pull_request ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  mvn_build_and_test:
+    name: Qbittorrent-exporter-native on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '24'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          native-image-job-reports: 'true'
+          cache: 'maven'
+
+      - name: Maven Build and native-image
+        run: |
+          mvn -B clean package
+          mkdir dist
+          native-image --no-fallback -jar target/qbittorrent-exporter-native*-jar-with-dependencies.jar -o dist/qbittorrent-exporter-native
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: qbittorrent-exporter-native_dist
+          path: dist
+          if-no-files-found: error
+
+  Build-and-Push-Docker-Image:
+    runs-on: ubuntu-latest
+    needs: mvn_build_and_test
+
+    permissions:
+      contents: read
+      packages: write
+
+    name: Docker Build, Tag, Push
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download built artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: qbittorrent-exporter-native_dist
+          path: dist
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: latest
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
