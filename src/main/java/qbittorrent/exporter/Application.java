@@ -38,6 +38,7 @@ public class Application {
         final ApiClient client = new ApiClient(baseUrl, username, password);
         try {
             final QbtHttpHandler handler = new QbtHttpHandler(client);
+
             final Undertow server = Undertow.builder()
                 .setIoThreads(2)
                 .setWorkerThreads(10)
