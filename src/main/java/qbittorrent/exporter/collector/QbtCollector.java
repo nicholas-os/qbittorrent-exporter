@@ -342,23 +342,23 @@ public class QbtCollector extends Collector implements QbtMetrics {
     @Override
     public void setTorrentInfo(Torrent torrent) {
         torrentInfo.labels(
-            torrent.getName(),
-            torrent.getState(),
-            String.valueOf(torrent.getSize()),
-            String.valueOf(torrent.getProgress()),
-            String.valueOf(torrent.getNumSeeds()),
-            String.valueOf(torrent.getNumLeechs()),
-            String.valueOf(torrent.getDownloadSpeed()),
-            String.valueOf(torrent.getUploadSpeed()),
-            String.valueOf(torrent.getAmountLeft()),
-            String.valueOf(torrent.getTimeActive()),
-            String.valueOf(torrent.getEta()),
-            String.valueOf(torrent.getUploaded()),
-            String.valueOf(torrent.getUploadedSession()),
-            String.valueOf(torrent.getDownloaded()),
-            String.valueOf(torrent.getDownloadedSession()),
-            String.valueOf(torrent.getMaxRatio()),
-            String.valueOf(torrent.getRatio())
+            torrent.name(),
+            torrent.state(),
+            String.valueOf(torrent.size()),
+            String.valueOf(torrent.progress()),
+            String.valueOf(torrent.numSeeds()),
+            String.valueOf(torrent.numLeechs()),
+            String.valueOf(torrent.dlspeed()),
+            String.valueOf(torrent.upspeed()),
+            String.valueOf(torrent.amountLeft()),
+            String.valueOf(torrent.timeActive()),
+            String.valueOf(torrent.eta()),
+            String.valueOf(torrent.uploaded()),
+            String.valueOf(torrent.uploadedSession()),
+            String.valueOf(torrent.downloaded()),
+            String.valueOf(torrent.downloadedSession()),
+            String.valueOf(torrent.maxRatio()),
+            String.valueOf(torrent.ratio())
         ).set(1);
     }
 

@@ -40,47 +40,48 @@ public class QbtHttpHandler implements HttpHandler {
             final List<Torrent> torrents = client.getTorrents();
             final Preferences preferences = client.getPreferences();
             final MainData data = client.getMainData();
-            final ServerState serverState = data.getServerState();
+            final ServerState serverState = data.serverState();
+
             collector.clear();
             collector.setAppVersion(client.getVersion());
             collector.setTotalTorrents(torrents.size());
-            collector.setGlobalAlltimeDownloadedBytes(serverState.getAlltimeDl());
-            collector.setGlobalAlltimeUploadedBytes(serverState.getAlltimeUl());
-            collector.setGlobalSessionDownloadedBytes(serverState.getDlInfoData());
-            collector.setGlobalSessionUploadedBytes(serverState.getUpInfoData());
-            collector.setGlobalDownloadSpeedBytes(serverState.getDlInfoSpeed());
-            collector.setGlobalUploadSpeedBytes(serverState.getUpInfoSpeed());
-            collector.setGlobalRatio(Double.parseDouble(serverState.getGlobalRatio()));
-            collector.setAppDownloadRateLimitBytes(serverState.getDlRateLimit());
-            collector.setAppUploadRateLimitBytes(serverState.getUpRateLimit());
-            collector.setAppAlternateDownloadRateLimitBytes(preferences.getAltDlLimit());
-            collector.setAppAlternateUploadRateLimitBytes(preferences.getAltUpLimit());
-            collector.setAppAlternateRateLimitsEnabled(serverState.isUseAltSpeedLimits());
-            collector.setAppMaxActiveDownloads(preferences.getMaxActiveDownloads());
-            collector.setAppMaxActiveUploads(preferences.getMaxActiveUploads());
-            collector.setAppMaxActiveTorrents(preferences.getMaxActiveTorrents());
+            collector.setGlobalAlltimeDownloadedBytes(serverState.alltimeDl());
+            collector.setGlobalAlltimeUploadedBytes(serverState.alltimeUl());
+            collector.setGlobalSessionDownloadedBytes(serverState.dlInfoData());
+            collector.setGlobalSessionUploadedBytes(serverState.upInfoData());
+            collector.setGlobalDownloadSpeedBytes(serverState.dlInfoSpeed());
+            collector.setGlobalUploadSpeedBytes(serverState.upInfoSpeed());
+            collector.setGlobalRatio(Double.parseDouble(serverState.globalRatio()));
+            collector.setAppDownloadRateLimitBytes(serverState.dlRateLimit());
+            collector.setAppUploadRateLimitBytes(serverState.upRateLimit());
+            collector.setAppAlternateDownloadRateLimitBytes(preferences.altDlLimit());
+            collector.setAppAlternateUploadRateLimitBytes(preferences.altUpLimit());
+            collector.setAppAlternateRateLimitsEnabled(serverState.useAltSpeedLimits());
+            collector.setAppMaxActiveDownloads(preferences.maxActiveDownloads());
+            collector.setAppMaxActiveUploads(preferences.maxActiveUploads());
+            collector.setAppMaxActiveTorrents(preferences.maxActiveTorrents());
 
             for (Torrent torrent : torrents) {
-                collector.setTorrentDownloadSpeedBytes(torrent.getName(), torrent.getDownloadSpeed());
-                collector.setTorrentUploadSpeedBytes(torrent.getName(), torrent.getUploadSpeed());
-                collector.setTorrentTotalDownloadedBytes(torrent.getName(), torrent.getDownloaded());
-                collector.setTorrentSessionDownloadedBytes(torrent.getName(), torrent.getDownloadedSession());
-                collector.setTorrentTotalUploadedBytes(torrent.getName(), torrent.getUploaded());
-                collector.setTorrentSessionUploadedBytes(torrent.getName(), torrent.getUploadedSession());
-                collector.setTorrentEta(torrent.getName(), torrent.getEta());
-                collector.setTorrentProgress(torrent.getName(), torrent.getProgress());
-                collector.setTorrentTimeActive(torrent.getName(), torrent.getTimeActive());
-                collector.setTorrentSeeders(torrent.getName(), torrent.getNumSeeds());
-                collector.setTorrentLeechers(torrent.getName(), torrent.getNumLeechs());
-                collector.setTorrentRatio(torrent.getName(), torrent.getRatio());
-                collector.setTorrentAmountLeftBytes(torrent.getName(), torrent.getAmountLeft());
-                collector.setTorrentSizeBytes(torrent.getName(), torrent.getSize());
+                collector.setTorrentDownloadSpeedBytes(torrent.name(), torrent.dlspeed());
+                collector.setTorrentUploadSpeedBytes(torrent.name(), torrent.upspeed());
+                collector.setTorrentTotalDownloadedBytes(torrent.name(), torrent.downloaded());
+                collector.setTorrentSessionDownloadedBytes(torrent.name(), torrent.downloadedSession());
+                collector.setTorrentTotalUploadedBytes(torrent.name(), torrent.uploaded());
+                collector.setTorrentSessionUploadedBytes(torrent.name(), torrent.uploadedSession());
+                collector.setTorrentEta(torrent.name(), torrent.eta());
+                collector.setTorrentProgress(torrent.name(), torrent.progress());
+                collector.setTorrentTimeActive(torrent.name(), torrent.timeActive());
+                collector.setTorrentSeeders(torrent.name(), torrent.numSeeds());
+                collector.setTorrentLeechers(torrent.name(), torrent.numLeechs());
+                collector.setTorrentRatio(torrent.name(), torrent.ratio());
+                collector.setTorrentAmountLeftBytes(torrent.name(), torrent.amountLeft());
+                collector.setTorrentSizeBytes(torrent.name(), torrent.size());
                 collector.setTorrentInfo(torrent);
             }
 
-            final List<String> states = torrents.stream().map(Torrent::getState).distinct().toList();
+            final List<String> states = torrents.stream().map(Torrent::state).distinct().toList();
             for (String state : states) {
-                final long count = torrents.stream().filter(t -> t.getState().equals(state)).count();
+                final long count = torrents.stream().filter(t -> t.state().equals(state)).count();
                 collector.setTorrentStates(state, count);
             }
 
