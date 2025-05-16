@@ -1,5 +1,4 @@
-FROM openjdk:17
-# Run ./gradlew installDist before running Docker build
+FROM ubuntu:25.10
 
 COPY build/install/qbittorrent-exporter /opt/qbittorrent-exporter
 ENTRYPOINT ["/opt/qbittorrent-exporter/bin/qbittorrent-exporter"]
