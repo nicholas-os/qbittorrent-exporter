@@ -1,6 +1,6 @@
 FROM ubuntu:25.10
 
-COPY build/dist/qbittorrent-exporter-native /opt/qbittorrent-exporter
+COPY dist/qbittorrent-exporter-native /opt/qbittorrent-exporter
 ENTRYPOINT ["/opt/qbittorrent-exporter"]
 
 EXPOSE 17871
