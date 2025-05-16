@@ -1,18 +1,22 @@
 package qbittorrent.exporter.handler;
 
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import io.micrometer.prometheus.PrometheusConfig;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
-import io.undertow.server.HttpHandler;
-import io.undertow.server.HttpServerExchange;
-import io.undertow.util.Headers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import qbittorrent.api.ApiClient;
 import qbittorrent.api.model.Torrent;
 import qbittorrent.exporter.collector.QbtCollector;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class QbtHttpHandler implements HttpHandler {
 
@@ -31,13 +35,21 @@ public class QbtHttpHandler implements HttpHandler {
     }
 
     @Override
-    public void handleRequest(HttpServerExchange exchange) {
-        LOGGER.info("Beginning prometheus metrics collection...");
+    public void handle(HttpExchange exchange) throws IOException {
+        LOGGER.debug("Beginning prometheus metrics collection...");
         final var start = Instant.now();
         try {
-            final var torrents = client.getTorrents();
-            final var preferences = client.getPreferences();
-            final var data = client.getMainData();
+
+            var getTorrentsCompletable = CompletableFuture.supplyAsync(client::getTorrents);
+            var getPreferencesCompletable = CompletableFuture.supplyAsync(client::getPreferences);
+            var getMainDataCompletable = CompletableFuture.supplyAsync(client::getMainData);
+
+            CompletableFuture
+                    .allOf(getTorrentsCompletable, getPreferencesCompletable, getMainDataCompletable).join();
+
+            final var torrents = getTorrentsCompletable.join();
+            final var preferences = getPreferencesCompletable.join();
+            final var data = getMainDataCompletable.join();
             final var serverState = data.serverState();
 
             collector.clear();
@@ -59,7 +71,7 @@ public class QbtHttpHandler implements HttpHandler {
             collector.setAppMaxActiveUploads(preferences.maxActiveUploads());
             collector.setAppMaxActiveTorrents(preferences.maxActiveTorrents());
 
-            for (var torrent : torrents) {
+            torrents.forEach(torrent -> {
                 collector.setTorrentDownloadSpeedBytes(torrent.name(), torrent.dlspeed());
                 collector.setTorrentUploadSpeedBytes(torrent.name(), torrent.upspeed());
                 collector.setTorrentTotalDownloadedBytes(torrent.name(), torrent.downloaded());
@@ -75,7 +87,7 @@ public class QbtHttpHandler implements HttpHandler {
                 collector.setTorrentAmountLeftBytes(torrent.name(), torrent.amountLeft());
                 collector.setTorrentSizeBytes(torrent.name(), torrent.size());
                 collector.setTorrentInfo(torrent);
-            }
+            });
 
             for (String state : torrents.stream().map(Torrent::state).distinct().toList()) {
                 collector.setTorrentStates(
@@ -85,13 +97,23 @@ public class QbtHttpHandler implements HttpHandler {
             }
 
             LOGGER.info("Completed in {}", Duration.between(start, Instant.now()));
-            exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, CONTENT_TYPE);
-            exchange.getResponseSender().send(registry.scrape());
+            exchange.getResponseHeaders().put("Content-Type", List.of(CONTENT_TYPE));
+
+            var responseBode = registry.scrape();
+            exchange.sendResponseHeaders(200, responseBode.length());
+            var os = exchange.getResponseBody();
+            os.write(responseBode.getBytes(StandardCharsets.UTF_8));
+            os.close();
         } catch (Exception e) {
             LOGGER.error("An error occurred calling API", e);
-            exchange.getResponseHeaders().put(Headers.CONTENT_TYPE, CONTENT_TYPE);
-            exchange.setStatusCode(500);
-            exchange.getResponseSender().send("An error occurred. " + e.getMessage());
+            var response = "An error occurred. " + e.getMessage();
+            exchange.getResponseHeaders().put("Content-Type", List.of(CONTENT_TYPE));
+            exchange.sendResponseHeaders(500, response.length());
+            OutputStream os = exchange.getResponseBody();
+            os.write(response.getBytes(StandardCharsets.UTF_8));
+            os.close();
         }
     }
 }
+
+

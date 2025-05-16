@@ -13,7 +13,6 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <logback.version>1.5.18</logback.version>
-        <undertow.version>2.3.18.Final</undertow.version>
         <gson.version>2.13.1</gson.version>
     </properties>
 
@@ -22,16 +21,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.undertow</groupId>
-            <artifactId>undertow-core</artifactId>
-            <version>${undertow.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.undertow</groupId>
-            <artifactId>undertow-servlet</artifactId>
-            <version>${undertow.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>

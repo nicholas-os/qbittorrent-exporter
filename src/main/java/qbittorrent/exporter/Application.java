@@ -1,12 +1,12 @@
 package qbittorrent.exporter;
 
-import io.undertow.Undertow;
+import com.sun.net.httpserver.HttpServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import qbittorrent.api.ApiClient;
 import qbittorrent.exporter.handler.QbtHttpHandler;
 
-import static io.undertow.Handlers.path;
+import java.net.InetSocketAddress;
 
 public class Application {
 
@@ -39,12 +39,9 @@ public class Application {
         try {
             final QbtHttpHandler handler = new QbtHttpHandler(client);
 
-            final Undertow server = Undertow.builder()
-                .setIoThreads(2)
-                .setWorkerThreads(10)
-                .addHttpListener(METRICS_PORT, METRICS_HOST)
-                .setHandler(path().addPrefixPath(METRICS_PATH, handler))
-                .build();
+            var server =
+                    HttpServer.create(new InetSocketAddress(METRICS_HOST, METRICS_PORT), 0);
+            server.createContext(METRICS_PATH, handler);
             server.start();
             String url = String.format("http://%s:%s%s", METRICS_HOST, METRICS_PORT, METRICS_PATH);
             LOGGER.info("Server is listening for connections at {}", url);

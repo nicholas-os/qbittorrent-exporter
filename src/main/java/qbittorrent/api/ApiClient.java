@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
-import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
@@ -37,20 +36,26 @@ public class ApiClient {
     public ApiClient(final String baseUrl, final String username, final String password) {
         this.baseUrl = baseUrl;
         LOGGER.info("Using qBittorrent url {}", baseUrl);
+
         client = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .build();
+
+        var longTypeAdapter = new LongTypeAdapter();
+
         gson = new GsonBuilder()
-            .registerTypeAdapter(long.class, new LongTypeAdapter())
-            .registerTypeAdapter(Long.class, new LongTypeAdapter())
+            .registerTypeAdapter(long.class, longTypeAdapter)
+            .registerTypeAdapter(Long.class, longTypeAdapter)
             .create();
+
         this.username = username;
         this.password = password;
     }
 
-    public void login(String username, String password) {
+    private void login(String username, String password) {
         final String url = baseUrl + "/api/v2/auth/login";
         LOGGER.info("Logging in user {} using {}", username, url);
+
         final String data = Map.of("username", username, "password", password)
             .entrySet()
             .stream()
@@ -64,23 +69,17 @@ public class ApiClient {
             .build();
 
         try {
-            final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            final String body = response.body();
-            final int status = response.statusCode();
+            var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            var body = response.body();
+            var status = response.statusCode();
+
             if (status != 200) {
                 LOGGER.warn("Login Error: {}", body);
                 throw new ApiException("Could not log in: (" + status + ") " + body);
             }
 
-            final HttpHeaders headers = response.headers();
-            final Optional<String> setCookie = headers.firstValue("Set-Cookie");
-
-            if (setCookie.isEmpty()) {
-                throw new ApiException("Could not get auth cookie from qBittorrent");
-            }
-
-            final String setCookieValue = setCookie.get();
-            if (!setCookieValue.contains("SID=")) {
+            final Optional<String> setCookie = response.headers().firstValue("Set-Cookie");
+            if (setCookie.isEmpty() || !setCookie.get().contains("SID=")) {
                 throw new ApiException("Could not get auth cookie from qBittorrent");
             }
 
