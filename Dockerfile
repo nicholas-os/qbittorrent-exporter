@@ -1,11 +1,7 @@
-FROM ubuntu:25.10
+FROM 24.0.1_9-jre-ubi9-minimal
 
-COPY dist/qbittorrent-exporter-native /opt/qbittorrent-exporter
-
-RUN chmod 555 /opt/qbittorrent-exporter
+COPY dist/*.jar /opt/qbittorrent-exporter.jar
 
 EXPOSE 17871/tcp
 
-ENTRYPOINT ["/opt/qbittorrent-exporter"]
-
-
+ENTRYPOINT ["java", "-jar", "/opt/qbittorrent-exporter.jar"]
