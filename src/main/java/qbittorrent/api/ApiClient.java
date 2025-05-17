@@ -1,11 +1,13 @@
 package qbittorrent.api;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import qbittorrent.api.gson.LongTypeAdapter;
 import qbittorrent.api.model.MainData;
 import qbittorrent.api.model.Preferences;
 import qbittorrent.api.model.Torrent;
@@ -28,25 +30,33 @@ public class ApiClient {
 
     private final String baseUrl;
     private final HttpClient client;
-    private final Gson gson;
     private final String username;
     private final String password;
     private String authCookie;
+    private final ObjectMapper objectMapper;
 
     public ApiClient(final String baseUrl, final String username, final String password) {
         this.baseUrl = baseUrl;
         LOGGER.info("Using qBittorrent url {}", baseUrl);
 
         client = HttpClient.newBuilder()
-            .version(HttpClient.Version.HTTP_1_1)
-            .build();
+                .version(HttpClient.Version.HTTP_1_1)
+                .build();
 
-        var longTypeAdapter = new LongTypeAdapter();
+        objectMapper = new ObjectMapper()
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        gson = new GsonBuilder()
-            .registerTypeAdapter(long.class, longTypeAdapter)
-            .registerTypeAdapter(Long.class, longTypeAdapter)
-            .create();
+        objectMapper.addHandler(new DeserializationProblemHandler() {
+            @Override
+            public Object handleWeirdStringValue(DeserializationContext ctxt, Class<?> targetType, String valueToConvert, String failureMsg) throws IOException {
+                return null;
+            }
+
+            @Override
+            public Object handleWeirdNumberValue(DeserializationContext ctxt, Class<?> targetType, Number valueToConvert, String failureMsg) throws IOException {
+                return null;
+            }
+        });
 
         this.username = username;
         this.password = password;
@@ -57,16 +67,16 @@ public class ApiClient {
         LOGGER.info("Logging in user {} using {}", username, url);
 
         final String data = Map.of("username", username, "password", password)
-            .entrySet()
-            .stream()
-            .map(e -> e.getKey() + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
-            .collect(Collectors.joining("&"));
+                .entrySet()
+                .stream()
+                .map(e -> e.getKey() + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
+                .collect(Collectors.joining("&"));
 
         final HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(url))
-            .POST(HttpRequest.BodyPublishers.ofString(data))
-            .header("Content-Type", "application/x-www-form-urlencoded")
-            .build();
+                .uri(URI.create(url))
+                .POST(HttpRequest.BodyPublishers.ofString(data))
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .build();
 
         try {
             var response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -95,12 +105,12 @@ public class ApiClient {
     }
 
     public MainData getMainData() {
-        return getRequest("/sync/maindata", new TypeToken<>() {
+        return getRequest("/sync/maindata", new TypeReference<>() {
         });
     }
 
     public Preferences getPreferences() {
-        return getRequest("/app/preferences", new TypeToken<>() {
+        return getRequest("/app/preferences", new TypeReference<>() {
         });
     }
 
@@ -109,7 +119,7 @@ public class ApiClient {
     }
 
     public List<Torrent> getTorrents() {
-        return getRequest("/torrents/info", new TypeToken<>() {
+        return getRequest("/torrents/info", new TypeReference<>() {
         });
     }
 
@@ -125,10 +135,10 @@ public class ApiClient {
 
         final String url = baseUrl + "/api/v2" + apiUrl;
         final HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(url))
-            .header("Cookie", "SID=" + authCookie)
-            .GET()
-            .build();
+                .uri(URI.create(url))
+                .header("Cookie", "SID=" + authCookie)
+                .GET()
+                .build();
 
         try {
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -156,8 +166,12 @@ public class ApiClient {
         }
     }
 
-    private <T> T getRequest(String apiUrl, TypeToken<T> token) {
+    private <T> T getRequest(String apiUrl, TypeReference<T> typeReference) {
         String json = getRequest(apiUrl);
-        return gson.fromJson(json, token.getType());
+        try {
+            return objectMapper.readValue(json, typeReference);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -1,7 +1,7 @@
 package qbittorrent.api.model;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record MainData(@SerializedName("server_state")
+public record MainData(@JsonProperty("server_state")
                        ServerState serverState) {
 }

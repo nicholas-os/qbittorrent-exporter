@@ -40,16 +40,21 @@ public class QbtHttpHandler implements HttpHandler {
         final var start = Instant.now();
         try {
 
-            var getTorrentsCompletable = CompletableFuture.supplyAsync(client::getTorrents);
-            var getPreferencesCompletable = CompletableFuture.supplyAsync(client::getPreferences);
-            var getMainDataCompletable = CompletableFuture.supplyAsync(client::getMainData);
+//            var getTorrentsCompletable = CompletableFuture.supplyAsync(client::getTorrents);
+//            var getPreferencesCompletable = CompletableFuture.supplyAsync(client::getPreferences);
+//            var getMainDataCompletable = CompletableFuture.supplyAsync(client::getMainData);
+//
+//            CompletableFuture
+//                    .allOf(getTorrentsCompletable, getPreferencesCompletable, getMainDataCompletable).join();
 
-            CompletableFuture
-                    .allOf(getTorrentsCompletable, getPreferencesCompletable, getMainDataCompletable).join();
+//            final var torrents = getTorrentsCompletable.join();
+//            final var preferences = getPreferencesCompletable.join();
+//            final var data = getMainDataCompletable.join();
+//            final var serverState = data.serverState();
 
-            final var torrents = getTorrentsCompletable.join();
-            final var preferences = getPreferencesCompletable.join();
-            final var data = getMainDataCompletable.join();
+            final var torrents = client.getTorrents();
+            final var preferences = client.getPreferences();
+            final var data = client.getMainData();
             final var serverState = data.serverState();
 
             collector.clear();

@@ -1,135 +1,136 @@
 package qbittorrent.api.model;
 
-import com.google.gson.annotations.SerializedName;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record Torrent(
 
-        @SerializedName("amount_left")
+        @JsonProperty("amount_left")
         long amountLeft,
 
-        @SerializedName("max_ratio")
+        @JsonProperty("max_ratio")
         double maxRatio,
 
-        @SerializedName("auto_tmm")
+        @JsonProperty("auto_tmm")
         boolean autoTmm,
 
-        @SerializedName("availability")
+        @JsonProperty("availability")
         double availability,
 
-        @SerializedName("num_incomplete")
+        @JsonProperty("num_incomplete")
         long numIncomplete,
 
-        @SerializedName("seeding_time_limit")
+        @JsonProperty("seeding_time_limit")
         long seedingTimeLimit,
 
-        @SerializedName("force_start")
+        @JsonProperty("force_start")
         boolean forceStart,
 
-        @SerializedName("save_path")
+        @JsonProperty("save_path")
         String savePath,
 
-        @SerializedName("num_seeds")
+        @JsonProperty("num_seeds")
         long numSeeds,
 
-        @SerializedName("dl_limit")
+        @JsonProperty("dl_limit")
         long dlLimit,
 
-        @SerializedName("eta")
+        @JsonProperty("eta")
         long eta,
 
-        @SerializedName("last_activity")
+        @JsonProperty("last_activity")
         long lastActivity,
 
-        @SerializedName("num_leechs")
+        @JsonProperty("num_leechs")
         long numLeechs,
 
-        @SerializedName("num_complete")
+        @JsonProperty("num_complete")
         long numComplete,
 
-        @SerializedName("seen_complete")
+        @JsonProperty("seen_complete")
         long seenComplete,
 
-        @SerializedName("tracker")
+        @JsonProperty("tracker")
         String tracker,
 
-        @SerializedName("uploaded")
+        @JsonProperty("uploaded")
         long uploaded,
 
-        @SerializedName("completion_on")
+        @JsonProperty("completion_on")
         long completionOn,
 
-        @SerializedName("ratio_limit")
+        @JsonProperty("ratio_limit")
         double ratioLimit,
 
-        @SerializedName("state")
+        @JsonProperty("state")
         String state,
 
-        @SerializedName("added_on")
+        @JsonProperty("added_on")
         long addedOn,
 
-        @SerializedName("time_active")
+        @JsonProperty("time_active")
         long timeActive,
 
-        @SerializedName("total_size")
+        @JsonProperty("total_size")
         long totalSize,
 
-        @SerializedName("seq_dl")
+        @JsonProperty("seq_dl")
         boolean seqDl,
 
-        @SerializedName("downloaded_session")
+        @JsonProperty("downloaded_session")
         long downloadedSession,
 
-        @SerializedName("completed")
+        @JsonProperty("completed")
         long completed,
 
-        @SerializedName("f_l_piece_prio")
+        @JsonProperty("f_l_piece_prio")
         boolean fLPiecePrio,
 
-        @SerializedName("priority")
+        @JsonProperty("priority")
         long priority,
 
-        @SerializedName("super_seeding")
+        @JsonProperty("super_seeding")
         boolean superSeeding,
 
-        @SerializedName("upspeed")
+        @JsonProperty("upspeed")
         long upspeed,
 
-        @SerializedName("downloaded")
+        @JsonProperty("downloaded")
         long downloaded,
 
-        @SerializedName("tags")
+        @JsonProperty("tags")
         String tags,
 
-        @SerializedName("uploaded_session")
+        @JsonProperty("uploaded_session")
         long uploadedSession,
 
-        @SerializedName("size")
+        @JsonProperty("size")
         long size,
 
-        @SerializedName("up_limit")
+        @JsonProperty("up_limit")
         long upLimit,
 
-        @SerializedName("magnet_uri")
+        @JsonProperty("magnet_uri")
         String magnetUri,
 
-        @SerializedName("max_seeding_time")
+        @JsonProperty("max_seeding_time")
         long maxSeedingTime,
 
-        @SerializedName("name")
+        @JsonProperty("name")
         String name,
 
-        @SerializedName("progress")
+        @JsonProperty("progress")
         double progress,
 
-        @SerializedName("category")
+        @JsonProperty("category")
         String category,
 
-        @SerializedName("dlspeed")
+        @JsonProperty("dlspeed")
         long dlspeed,
 
-        @SerializedName("hash")
+        @JsonProperty("hash")
         String hash,
 
-        @SerializedName("ratio")
+        @JsonProperty("ratio")
         double ratio) {
 }
