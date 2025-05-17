@@ -1,4 +1,4 @@
-FROM 24.0.1_9-jre-ubi9-minimal
+FROM eclipse-temurin:24.0.1_9-jre-ubi9-minimal
 
 COPY dist/*.jar /opt/qbittorrent-exporter.jar
 
