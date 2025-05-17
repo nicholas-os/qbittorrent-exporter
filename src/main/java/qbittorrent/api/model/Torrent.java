@@ -1,136 +1,48 @@
 package qbittorrent.api.model;
 
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record Torrent(
-
-        @JsonProperty("amount_left")
-        long amountLeft,
-
-        @JsonProperty("max_ratio")
-        double maxRatio,
-
-        @JsonProperty("auto_tmm")
-        boolean autoTmm,
-
-        @JsonProperty("availability")
-        double availability,
-
-        @JsonProperty("num_incomplete")
-        long numIncomplete,
-
-        @JsonProperty("seeding_time_limit")
-        long seedingTimeLimit,
-
-        @JsonProperty("force_start")
-        boolean forceStart,
-
-        @JsonProperty("save_path")
-        String savePath,
-
-        @JsonProperty("num_seeds")
-        long numSeeds,
-
-        @JsonProperty("dl_limit")
-        long dlLimit,
-
-        @JsonProperty("eta")
-        long eta,
-
-        @JsonProperty("last_activity")
-        long lastActivity,
-
-        @JsonProperty("num_leechs")
-        long numLeechs,
-
-        @JsonProperty("num_complete")
-        long numComplete,
-
-        @JsonProperty("seen_complete")
-        long seenComplete,
-
-        @JsonProperty("tracker")
-        String tracker,
-
-        @JsonProperty("uploaded")
-        long uploaded,
-
-        @JsonProperty("completion_on")
-        long completionOn,
-
-        @JsonProperty("ratio_limit")
-        double ratioLimit,
-
-        @JsonProperty("state")
-        String state,
-
-        @JsonProperty("added_on")
-        long addedOn,
-
-        @JsonProperty("time_active")
-        long timeActive,
-
-        @JsonProperty("total_size")
-        long totalSize,
-
-        @JsonProperty("seq_dl")
-        boolean seqDl,
-
-        @JsonProperty("downloaded_session")
-        long downloadedSession,
-
-        @JsonProperty("completed")
-        long completed,
-
-        @JsonProperty("f_l_piece_prio")
-        boolean fLPiecePrio,
-
-        @JsonProperty("priority")
-        long priority,
-
-        @JsonProperty("super_seeding")
-        boolean superSeeding,
-
-        @JsonProperty("upspeed")
-        long upspeed,
-
-        @JsonProperty("downloaded")
-        long downloaded,
-
-        @JsonProperty("tags")
-        String tags,
-
-        @JsonProperty("uploaded_session")
-        long uploadedSession,
-
-        @JsonProperty("size")
-        long size,
-
-        @JsonProperty("up_limit")
-        long upLimit,
-
-        @JsonProperty("magnet_uri")
-        String magnetUri,
-
-        @JsonProperty("max_seeding_time")
-        long maxSeedingTime,
-
-        @JsonProperty("name")
-        String name,
-
-        @JsonProperty("progress")
-        double progress,
-
-        @JsonProperty("category")
-        String category,
-
-        @JsonProperty("dlspeed")
-        long dlspeed,
-
-        @JsonProperty("hash")
-        String hash,
-
-        @JsonProperty("ratio")
-        double ratio) {
-}
+        @JsonProperty("amount_left") long amountLeft,
+        @JsonProperty("max_ratio") double maxRatio,
+        @JsonProperty("auto_tmm") boolean autoTmm,
+        @JsonProperty("availability") double availability,
+        @JsonProperty("num_incomplete") long numIncomplete,
+        @JsonProperty("seeding_time_limit") long seedingTimeLimit,
+        @JsonProperty("force_start") boolean forceStart,
+        @JsonProperty("save_path") String savePath,
+        @JsonProperty("num_seeds") long numSeeds,
+        @JsonProperty("dl_limit") long dlLimit,
+        @JsonProperty("eta") long eta,
+        @JsonProperty("last_activity") long lastActivity,
+        @JsonProperty("num_leechs") long numLeechs,
+        @JsonProperty("num_complete") long numComplete,
+        @JsonProperty("seen_complete") long seenComplete,
+        @JsonProperty("tracker") String tracker,
+        @JsonProperty("uploaded") long uploaded,
+        @JsonProperty("completion_on") long completionOn,
+        @JsonProperty("ratio_limit") double ratioLimit,
+        @JsonProperty("state") String state,
+        @JsonProperty("added_on") long addedOn,
+        @JsonProperty("time_active") long timeActive,
+        @JsonProperty("total_size") long totalSize,
+        @JsonProperty("seq_dl") boolean seqDl,
+        @JsonProperty("downloaded_session") long downloadedSession,
+        @JsonProperty("completed") long completed,
+        @JsonProperty("f_l_piece_prio") boolean fLPiecePrio,
+        @JsonProperty("priority") long priority,
+        @JsonProperty("super_seeding") boolean superSeeding,
+        @JsonProperty("upspeed") long upspeed,
+        @JsonProperty("downloaded") long downloaded,
+        @JsonProperty("tags") String tags,
+        @JsonProperty("uploaded_session") long uploadedSession,
+        @JsonProperty("size") long size,
+        @JsonProperty("up_limit") long upLimit,
+        @JsonProperty("magnet_uri") String magnetUri,
+        @JsonProperty("max_seeding_time") long maxSeedingTime,
+        @JsonProperty("name") String name,
+        @JsonProperty("progress") double progress,
+        @JsonProperty("category") String category,
+        @JsonProperty("dlspeed") long dlspeed,
+        @JsonProperty("hash") String hash,
+        @JsonProperty("ratio") double ratio) {}

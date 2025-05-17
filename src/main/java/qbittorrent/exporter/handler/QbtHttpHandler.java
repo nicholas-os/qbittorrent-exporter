@@ -4,19 +4,17 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import io.micrometer.prometheus.PrometheusConfig;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import qbittorrent.api.ApiClient;
-import qbittorrent.api.model.Torrent;
-import qbittorrent.exporter.collector.QbtCollector;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import qbittorrent.api.ApiClient;
+import qbittorrent.api.model.Torrent;
+import qbittorrent.exporter.collector.QbtCollector;
 
 public class QbtHttpHandler implements HttpHandler {
 
@@ -40,17 +38,18 @@ public class QbtHttpHandler implements HttpHandler {
         final var start = Instant.now();
         try {
 
-//            var getTorrentsCompletable = CompletableFuture.supplyAsync(client::getTorrents);
-//            var getPreferencesCompletable = CompletableFuture.supplyAsync(client::getPreferences);
-//            var getMainDataCompletable = CompletableFuture.supplyAsync(client::getMainData);
-//
-//            CompletableFuture
-//                    .allOf(getTorrentsCompletable, getPreferencesCompletable, getMainDataCompletable).join();
+            //            var getTorrentsCompletable = CompletableFuture.supplyAsync(client::getTorrents);
+            //            var getPreferencesCompletable = CompletableFuture.supplyAsync(client::getPreferences);
+            //            var getMainDataCompletable = CompletableFuture.supplyAsync(client::getMainData);
+            //
+            //            CompletableFuture
+            //                    .allOf(getTorrentsCompletable, getPreferencesCompletable,
+            // getMainDataCompletable).join();
 
-//            final var torrents = getTorrentsCompletable.join();
-//            final var preferences = getPreferencesCompletable.join();
-//            final var data = getMainDataCompletable.join();
-//            final var serverState = data.serverState();
+            //            final var torrents = getTorrentsCompletable.join();
+            //            final var preferences = getPreferencesCompletable.join();
+            //            final var data = getMainDataCompletable.join();
+            //            final var serverState = data.serverState();
 
             final var torrents = client.getTorrents();
             final var preferences = client.getPreferences();
@@ -97,8 +96,7 @@ public class QbtHttpHandler implements HttpHandler {
             for (String state : torrents.stream().map(Torrent::state).distinct().toList()) {
                 collector.setTorrentStates(
                         state,
-                        torrents.stream().filter(t -> t.state().equals(state)).count()
-                );
+                        torrents.stream().filter(t -> t.state().equals(state)).count());
             }
 
             LOGGER.info("Completed in {}", Duration.between(start, Instant.now()));
@@ -120,5 +118,3 @@ public class QbtHttpHandler implements HttpHandler {
         }
     }
 }
-
-

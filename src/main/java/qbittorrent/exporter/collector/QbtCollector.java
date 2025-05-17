@@ -2,10 +2,9 @@ package qbittorrent.exporter.collector;
 
 import io.prometheus.client.Collector;
 import io.prometheus.client.Gauge;
-import qbittorrent.api.model.Torrent;
-
 import java.util.ArrayList;
 import java.util.List;
+import qbittorrent.api.model.Torrent;
 
 public class QbtCollector extends Collector implements QbtMetrics {
 
@@ -14,251 +13,249 @@ public class QbtCollector extends Collector implements QbtMetrics {
     // region App Metrics
 
     private final Gauge appVersion = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "app_version")
-        .labelNames("version")
-        .help("The current qBittorrent version")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "app_version")
+            .labelNames("version")
+            .help("The current qBittorrent version")
+            .create();
 
     private final Gauge appMaxActiveDownloads = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "app_max_active_downloads")
-        .help("The max number of downloads allowed")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "app_max_active_downloads")
+            .help("The max number of downloads allowed")
+            .create();
 
     private final Gauge appMaxActiveUploads = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "app_max_active_uploads")
-        .help("The max number of active uploads allowed")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "app_max_active_uploads")
+            .help("The max number of active uploads allowed")
+            .create();
 
     private final Gauge appMaxActiveTorrents = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "app_max_active_torrents")
-        .help("The max number of active torrents allowed")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "app_max_active_torrents")
+            .help("The max number of active torrents allowed")
+            .create();
 
     private final Gauge appDownloadRateLimitBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "app_download_rate_limit_bytes")
-        .help("The global download rate limit (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "app_download_rate_limit_bytes")
+            .help("The global download rate limit (in bytes)")
+            .create();
 
     private final Gauge appUploadRateLimitBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "app_upload_rate_limit_bytes")
-        .help("The global upload rate limit (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "app_upload_rate_limit_bytes")
+            .help("The global upload rate limit (in bytes)")
+            .create();
 
     private final Gauge appAlternateDownloadRateLimitBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "app_alt_download_rate_limit_bytes")
-        .help("The alternate download rate limit (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "app_alt_download_rate_limit_bytes")
+            .help("The alternate download rate limit (in bytes)")
+            .create();
 
     private final Gauge appAlternateUploadRateLimitBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "app_alt_upload_rate_limit_bytes")
-        .help("The alternate upload rate limit (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "app_alt_upload_rate_limit_bytes")
+            .help("The alternate upload rate limit (in bytes)")
+            .create();
 
     private final Gauge appAlternateRateLimitsEnabled = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "app_alt_rate_limits_enabled")
-        .help("If alternate rate limits are enabled")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "app_alt_rate_limits_enabled")
+            .help("If alternate rate limits are enabled")
+            .create();
 
     // endregion
 
     // region Torrent Metrics
 
     private final Gauge torrentDownloadSpeedBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_download_speed_bytes")
-        .labelNames("name")
-        .help("The current download speed of torrents (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_download_speed_bytes")
+            .labelNames("name")
+            .help("The current download speed of torrents (in bytes)")
+            .create();
 
     private final Gauge torrentUploadSpeedBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_upload_speed_bytes")
-        .labelNames("name")
-        .help("The current upload speed of torrents (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_upload_speed_bytes")
+            .labelNames("name")
+            .help("The current upload speed of torrents (in bytes)")
+            .create();
 
     private final Gauge torrentEta = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_eta")
-        .labelNames("name")
-        .help("The current ETA for each torrent (in seconds)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_eta")
+            .labelNames("name")
+            .help("The current ETA for each torrent (in seconds)")
+            .create();
 
     private final Gauge torrentProgress = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_progress")
-        .labelNames("name")
-        .help("The current progress of torrents")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_progress")
+            .labelNames("name")
+            .help("The current progress of torrents")
+            .create();
 
     private final Gauge torrentTimeActive = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_time_active")
-        .labelNames("name")
-        .help("The total active time (in seconds)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_time_active")
+            .labelNames("name")
+            .help("The total active time (in seconds)")
+            .create();
 
     private final Gauge torrentStates = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_states")
-        .labelNames("name")
-        .help("The current state of torrents")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_states")
+            .labelNames("name")
+            .help("The current state of torrents")
+            .create();
 
     private final Gauge torrentSeeders = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_seeders")
-        .labelNames("name")
-        .help("The current number of seeders for each torrent")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_seeders")
+            .labelNames("name")
+            .help("The current number of seeders for each torrent")
+            .create();
 
     private final Gauge torrentLeechers = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_leechers")
-        .labelNames("name")
-        .help("The current number of leechers for each torrent")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_leechers")
+            .labelNames("name")
+            .help("The current number of leechers for each torrent")
+            .create();
 
     private final Gauge torrentRatio = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_ratio")
-        .labelNames("name")
-        .help("The current ratio each torrent")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_ratio")
+            .labelNames("name")
+            .help("The current ratio each torrent")
+            .create();
 
     private final Gauge torrentAmountLeftBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_amount_left_bytes")
-        .labelNames("name")
-        .help("The amount remaining for each torrent (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_amount_left_bytes")
+            .labelNames("name")
+            .help("The amount remaining for each torrent (in bytes)")
+            .create();
 
     private final Gauge torrentSizeBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_size_bytes")
-        .labelNames("name")
-        .help("The size for each torrent (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_size_bytes")
+            .labelNames("name")
+            .help("The size for each torrent (in bytes)")
+            .create();
 
     private final Gauge torrentInfo = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_info")
-        .labelNames(
-            "name",
-            "state",
-            "size",
-            "progress",
-            "seeders",
-            "leechers",
-            "dl_speed",
-            "up_speed",
-            "amount_left",
-            "time_active",
-            "eta",
-            "uploaded",
-            "uploaded_session",
-            "downloaded",
-            "downloaded_session",
-            "max_ratio",
-            "ratio"
-        )
-        .help("All info for torrents")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_info")
+            .labelNames(
+                    "name",
+                    "state",
+                    "size",
+                    "progress",
+                    "seeders",
+                    "leechers",
+                    "dl_speed",
+                    "up_speed",
+                    "amount_left",
+                    "time_active",
+                    "eta",
+                    "uploaded",
+                    "uploaded_session",
+                    "downloaded",
+                    "downloaded_session",
+                    "max_ratio",
+                    "ratio")
+            .help("All info for torrents")
+            .create();
 
     private final Gauge torrentSessionUploadedBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_session_uploaded_bytes")
-        .labelNames("name")
-        .help("The current session upload amount of torrents (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_session_uploaded_bytes")
+            .labelNames("name")
+            .help("The current session upload amount of torrents (in bytes)")
+            .create();
 
     private final Gauge torrentSessionDownloadedBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_session_downloaded_bytes")
-        .labelNames("name")
-        .help("The current session download amount of torrents (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_session_downloaded_bytes")
+            .labelNames("name")
+            .help("The current session download amount of torrents (in bytes)")
+            .create();
 
     private final Gauge torrentTotalDownloadedBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_total_downloaded_bytes")
-        .labelNames("name")
-        .help("The current total download amount of torrents (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_total_downloaded_bytes")
+            .labelNames("name")
+            .help("The current total download amount of torrents (in bytes)")
+            .create();
 
     private final Gauge torrentTotalUploadedBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "torrent_total_uploaded_bytes")
-        .labelNames("name")
-        .help("The current total upload amount of torrents (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "torrent_total_uploaded_bytes")
+            .labelNames("name")
+            .help("The current total upload amount of torrents (in bytes)")
+            .create();
 
     // endregion
 
     // region Global Metrics
 
     private final Gauge globalAlltimeDownloadedBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "global_alltime_downloaded_bytes")
-        .help("The all-time total download amount of torrents (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "global_alltime_downloaded_bytes")
+            .help("The all-time total download amount of torrents (in bytes)")
+            .create();
 
     private final Gauge globalAlltimeUploadedBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "global_alltime_uploaded_bytes")
-        .help("The all-time total upload amount of torrents (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "global_alltime_uploaded_bytes")
+            .help("The all-time total upload amount of torrents (in bytes)")
+            .create();
 
     private final Gauge globalSessionDownloadedBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "global_session_downloaded_bytes")
-        .help("The total download amount of torrents for this session (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "global_session_downloaded_bytes")
+            .help("The total download amount of torrents for this session (in bytes)")
+            .create();
 
     private final Gauge globalSessionUploadedBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "global_session_uploaded_bytes")
-        .help("The total upload amount of torrents for this session (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "global_session_uploaded_bytes")
+            .help("The total upload amount of torrents for this session (in bytes)")
+            .create();
 
     private final Gauge globalDownloadSpeedBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "global_download_speed_bytes")
-        .help("The current download speed of all torrents (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "global_download_speed_bytes")
+            .help("The current download speed of all torrents (in bytes)")
+            .create();
 
     private final Gauge globalUploadSpeedBytes = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "global_upload_speed_bytes")
-        .help("The total current upload speed of all torrents (in bytes)")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "global_upload_speed_bytes")
+            .help("The total current upload speed of all torrents (in bytes)")
+            .create();
 
     private final Gauge globalRatio = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "global_ratio")
-        .help("The current global ratio of all torrents")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "global_ratio")
+            .help("The current global ratio of all torrents")
+            .create();
 
     private final Gauge totalTorrents = Gauge.build()
-        .name(GAUGE_NAME_PREFIX + "global_torrents")
-        .help("The total number of torrents")
-        .create();
+            .name(GAUGE_NAME_PREFIX + "global_torrents")
+            .help("The total number of torrents")
+            .create();
 
     // endregion
 
     private List<Gauge> getMetrics() {
         return List.of(
-            appVersion,
-            torrentDownloadSpeedBytes,
-            torrentUploadSpeedBytes,
-            torrentEta,
-            torrentProgress,
-            torrentTimeActive,
-            torrentStates,
-            torrentSeeders,
-            torrentLeechers,
-            torrentRatio,
-            torrentAmountLeftBytes,
-            torrentSizeBytes,
-            torrentInfo,
-            torrentSessionDownloadedBytes,
-            torrentSessionUploadedBytes,
-            torrentTotalDownloadedBytes,
-            torrentTotalUploadedBytes,
-            appMaxActiveDownloads,
-            appMaxActiveUploads,
-            appMaxActiveTorrents,
-            appDownloadRateLimitBytes,
-            appUploadRateLimitBytes,
-            appAlternateDownloadRateLimitBytes,
-            appAlternateUploadRateLimitBytes,
-            appAlternateRateLimitsEnabled,
-            globalAlltimeDownloadedBytes,
-            globalAlltimeUploadedBytes,
-            globalSessionDownloadedBytes,
-            globalSessionUploadedBytes,
-            globalDownloadSpeedBytes,
-            globalUploadSpeedBytes,
-            globalRatio,
-            totalTorrents
-        );
+                appVersion,
+                torrentDownloadSpeedBytes,
+                torrentUploadSpeedBytes,
+                torrentEta,
+                torrentProgress,
+                torrentTimeActive,
+                torrentStates,
+                torrentSeeders,
+                torrentLeechers,
+                torrentRatio,
+                torrentAmountLeftBytes,
+                torrentSizeBytes,
+                torrentInfo,
+                torrentSessionDownloadedBytes,
+                torrentSessionUploadedBytes,
+                torrentTotalDownloadedBytes,
+                torrentTotalUploadedBytes,
+                appMaxActiveDownloads,
+                appMaxActiveUploads,
+                appMaxActiveTorrents,
+                appDownloadRateLimitBytes,
+                appUploadRateLimitBytes,
+                appAlternateDownloadRateLimitBytes,
+                appAlternateUploadRateLimitBytes,
+                appAlternateRateLimitsEnabled,
+                globalAlltimeDownloadedBytes,
+                globalAlltimeUploadedBytes,
+                globalSessionDownloadedBytes,
+                globalSessionUploadedBytes,
+                globalDownloadSpeedBytes,
+                globalUploadSpeedBytes,
+                globalRatio,
+                totalTorrents);
     }
 
     // region QbtMetrics methods
@@ -341,25 +338,26 @@ public class QbtCollector extends Collector implements QbtMetrics {
 
     @Override
     public void setTorrentInfo(Torrent torrent) {
-        torrentInfo.labels(
-            torrent.name(),
-            torrent.state(),
-            String.valueOf(torrent.size()),
-            String.valueOf(torrent.progress()),
-            String.valueOf(torrent.numSeeds()),
-            String.valueOf(torrent.numLeechs()),
-            String.valueOf(torrent.dlspeed()),
-            String.valueOf(torrent.upspeed()),
-            String.valueOf(torrent.amountLeft()),
-            String.valueOf(torrent.timeActive()),
-            String.valueOf(torrent.eta()),
-            String.valueOf(torrent.uploaded()),
-            String.valueOf(torrent.uploadedSession()),
-            String.valueOf(torrent.downloaded()),
-            String.valueOf(torrent.downloadedSession()),
-            String.valueOf(torrent.maxRatio()),
-            String.valueOf(torrent.ratio())
-        ).set(1);
+        torrentInfo
+                .labels(
+                        torrent.name(),
+                        torrent.state(),
+                        String.valueOf(torrent.size()),
+                        String.valueOf(torrent.progress()),
+                        String.valueOf(torrent.numSeeds()),
+                        String.valueOf(torrent.numLeechs()),
+                        String.valueOf(torrent.dlspeed()),
+                        String.valueOf(torrent.upspeed()),
+                        String.valueOf(torrent.amountLeft()),
+                        String.valueOf(torrent.timeActive()),
+                        String.valueOf(torrent.eta()),
+                        String.valueOf(torrent.uploaded()),
+                        String.valueOf(torrent.uploadedSession()),
+                        String.valueOf(torrent.downloaded()),
+                        String.valueOf(torrent.downloadedSession()),
+                        String.valueOf(torrent.maxRatio()),
+                        String.valueOf(torrent.ratio()))
+                .set(1);
     }
 
     @Override

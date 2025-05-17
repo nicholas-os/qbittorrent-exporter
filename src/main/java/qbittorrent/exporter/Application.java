@@ -1,12 +1,11 @@
 package qbittorrent.exporter;
 
 import com.sun.net.httpserver.HttpServer;
+import java.net.InetSocketAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import qbittorrent.api.ApiClient;
 import qbittorrent.exporter.handler.QbtHttpHandler;
-
-import java.net.InetSocketAddress;
 
 public class Application {
 
@@ -39,8 +38,7 @@ public class Application {
         try {
             final QbtHttpHandler handler = new QbtHttpHandler(client);
 
-            var server =
-                    HttpServer.create(new InetSocketAddress(METRICS_HOST, METRICS_PORT), 0);
+            var server = HttpServer.create(new InetSocketAddress(METRICS_HOST, METRICS_PORT), 0);
             server.createContext(METRICS_PATH, handler);
             server.start();
             String url = String.format("http://%s:%s%s", METRICS_HOST, METRICS_PORT, METRICS_PATH);

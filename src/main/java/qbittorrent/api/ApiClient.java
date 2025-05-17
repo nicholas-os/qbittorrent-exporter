@@ -6,12 +6,6 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import qbittorrent.api.model.MainData;
-import qbittorrent.api.model.Preferences;
-import qbittorrent.api.model.Torrent;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -23,6 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import qbittorrent.api.model.MainData;
+import qbittorrent.api.model.Preferences;
+import qbittorrent.api.model.Torrent;
 
 public class ApiClient {
 
@@ -39,21 +38,22 @@ public class ApiClient {
         this.baseUrl = baseUrl;
         LOGGER.info("Using qBittorrent url {}", baseUrl);
 
-        client = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
-                .build();
+        client = HttpClient.newBuilder().version(HttpClient.Version.HTTP_1_1).build();
 
-        objectMapper = new ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         objectMapper.addHandler(new DeserializationProblemHandler() {
             @Override
-            public Object handleWeirdStringValue(DeserializationContext ctxt, Class<?> targetType, String valueToConvert, String failureMsg) throws IOException {
+            public Object handleWeirdStringValue(
+                    DeserializationContext ctxt, Class<?> targetType, String valueToConvert, String failureMsg)
+                    throws IOException {
                 return null;
             }
 
             @Override
-            public Object handleWeirdNumberValue(DeserializationContext ctxt, Class<?> targetType, Number valueToConvert, String failureMsg) throws IOException {
+            public Object handleWeirdNumberValue(
+                    DeserializationContext ctxt, Class<?> targetType, Number valueToConvert, String failureMsg)
+                    throws IOException {
                 return null;
             }
         });
@@ -66,9 +66,7 @@ public class ApiClient {
         final String url = baseUrl + "/api/v2/auth/login";
         LOGGER.info("Logging in user {} using {}", username, url);
 
-        final String data = Map.of("username", username, "password", password)
-                .entrySet()
-                .stream()
+        final String data = Map.of("username", username, "password", password).entrySet().stream()
                 .map(e -> e.getKey() + "=" + URLEncoder.encode(e.getValue(), StandardCharsets.UTF_8))
                 .collect(Collectors.joining("&"));
 
@@ -105,13 +103,11 @@ public class ApiClient {
     }
 
     public MainData getMainData() {
-        return getRequest("/sync/maindata", new TypeReference<>() {
-        });
+        return getRequest("/sync/maindata", new TypeReference<>() {});
     }
 
     public Preferences getPreferences() {
-        return getRequest("/app/preferences", new TypeReference<>() {
-        });
+        return getRequest("/app/preferences", new TypeReference<>() {});
     }
 
     public String getVersion() {
@@ -119,8 +115,7 @@ public class ApiClient {
     }
 
     public List<Torrent> getTorrents() {
-        return getRequest("/torrents/info", new TypeReference<>() {
-        });
+        return getRequest("/torrents/info", new TypeReference<>() {});
     }
 
     private String getRequest(final String apiUrl) {
@@ -153,7 +148,8 @@ public class ApiClient {
                 authCookie = null;
                 return getRequest(apiUrl, retries - 1);
             } else if (statusCode != 200) {
-                throw new ApiException("An error occurred calling " + url + ": (" + statusCode + ") " + response.body());
+                throw new ApiException(
+                        "An error occurred calling " + url + ": (" + statusCode + ") " + response.body());
             }
             final String body = response.body();
             LOGGER.trace("JSON result from {} call: {}", apiUrl, body);
